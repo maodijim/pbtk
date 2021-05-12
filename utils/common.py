@@ -257,7 +257,15 @@ def extractor_main(extractor):
             parser.add_argument('input_', metavar='input_file')
         parser.add_argument('output_dir', type=Path, default='.', nargs='?')
         args = parser.parse_args()
-        
-        nb_written, wrote_endpoints = extractor_save(args.output_dir, '', extractor['func'](args.input_))
-        if nb_written:
-            print('\n[+] Wrote %s .proto files to "%s".\n' % (nb_written, args.output_dir))
+
+        if path.isdir(args.input_):
+            for f in listdir(args.input_):
+                f_path = path.join(args.input_, f)
+                if path.isfile(f_path):
+                    nb_written, wrote_endpoints = extractor_save(args.output_dir, '', extractor['func'](f_path))
+                    if nb_written:
+                        print('\n[+] Wrote %s .proto files to "%s".\n' % (nb_written, args.output_dir))
+        else:
+            nb_written, wrote_endpoints = extractor_save(args.output_dir, '', extractor['func'](args.input_))
+            if nb_written:
+                print('\n[+] Wrote %s .proto files to "%s".\n' % (nb_written, args.output_dir))
