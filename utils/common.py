@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 #-*- encoding: Utf-8 -*-
 from collections import OrderedDict, defaultdict
-from os.path import exists, dirname, realpath
+from os.path import exists, dirname, realpath, isdir, join, isfile
 from google.protobuf.message import Message
 from importlib import import_module, reload
 from tempfile import TemporaryDirectory
 from inspect import getmembers, isclass
 from sys import platform, path as PATH
-from os import environ, makedirs, sep
+from os import environ, makedirs, sep, listdir
 from importlib.util import find_spec
 from argparse import ArgumentParser
 from urllib.parse import urlparse
@@ -258,10 +258,10 @@ def extractor_main(extractor):
         parser.add_argument('output_dir', type=Path, default='.', nargs='?')
         args = parser.parse_args()
 
-        if path.isdir(args.input_):
+        if isdir(args.input_):
             for f in listdir(args.input_):
-                f_path = path.join(args.input_, f)
-                if path.isfile(f_path):
+                f_path = join(args.input_, f)
+                if isfile(f_path):
                     nb_written, wrote_endpoints = extractor_save(args.output_dir, '', extractor['func'](f_path))
                     if nb_written:
                         print('\n[+] Wrote %s .proto files to "%s".\n' % (nb_written, args.output_dir))
